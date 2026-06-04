@@ -1,44 +1,26 @@
 # 02-EVPN-Control-Plane.md
 
-## Objective
+# Objective
 
 Establish the EVPN control plane between Leaf and Spine switches using BGP EVPN.
 
-At the end of this phase:
+This phase is responsible for:
 
-* EVPN capability is negotiated between all Leafs and Spines
-* Underlay BGP remains operational
-* VTEP loopbacks are reachable
-* EVPN address-family is active
-* Fabric is ready for NVE and VNI configuration
+* EVPN route exchange
+* VTEP discovery
+* IMET (Type-3) route advertisement
+* Route Target (RT) import/export
+* Building the VXLAN control plane
+
+No MAC learning or host traffic is tested in this phase.
 
 ---
 
 # Topology
 
-```text
-                 Spine1 (AS65000)
-                /               \
-               /                 \
-              /                   \
-             /                     \
-            /                       \
- Leaf1 (AS65101)               Leaf2 (AS65102)
-            \                       /
-             \                     /
-              \                   /
-               \                 /
-                \               /
-                 Spine2 (AS65000)
-```
-
----
-
-# Design
-
 ## Underlay
 
-eBGP IPv4 Unicast
+eBGP IPv4 Underlay
 
 | Device | ASN   |
 | ------ | ----- |
@@ -47,295 +29,298 @@ eBGP IPv4 Unicast
 | Leaf1  | 65101 |
 | Leaf2  | 65102 |
 
----
+Underlay provides reachability to:
 
-## Overlay
-
-eBGP EVPN
-
-Existing underlay neighbors are reused for EVPN.
-
-No Route Reflectors are used.
-
-No additional loopback EVPN sessions are required.
+* Loopback0 (BGP Router-ID)
+* Loopback1 (VTEP)
 
 ---
 
-# Prerequisites
-
-The following must already be working:
-
-* eBGP Underlay
-* Loopback0 Reachability
-* VTEP Loopback Reachability
-
-## VTEP Addresses
-
-| Device | Loopback1          |
-| ------ | ------------------ |
-| Leaf1  | 111.111.111.111/32 |
-| Leaf2  | 222.222.222.222/32 |
-
----
-
-# Feature Configuration
+# Loopbacks
 
 ## Leaf1
 
-```bash
-feature bgp
-feature nv overlay
-feature vn-segment-vlan-based
+| Interface | Address            |
+| --------- | ------------------ |
+| Lo0       | 11.11.11.11/32     |
+| Lo1       | 111.111.111.111/32 |
 
-nv overlay evpn
+## Leaf2
+
+| Interface | Address            |
+| --------- | ------------------ |
+| Lo0       | 22.22.22.22/32     |
+| Lo1       | 222.222.222.222/32 |
+
+## Spine1
+
+| Interface | Address    |
+| --------- | ---------- |
+| Lo0       | 1.1.1.1/32 |
+
+## Spine2
+
+| Interface | Address    |
+| --------- | ---------- |
+| Lo0       | 2.2.2.2/32 |
+
+---
+
+# Design Decision
+
+Initial testing used EVPN peering across directly connected underlay links.
+
+Example:
+
+```text
+Leaf1 -> 10.0.11.1
+Leaf1 -> 10.0.12.1
+
+Leaf2 -> 10.0.21.1
+Leaf2 -> 10.0.22.1
+```
+
+The final design moved EVPN to loopback-based overlay peering.
+
+Benefits:
+
+* Independent underlay and overlay
+* Better scalability
+* Closer to production EVPN deployments
+* Consistent VTEP reachability
+
+---
+
+# EVPN Overlay Peering
+
+## Leaf1
+
+```cisco
+neighbor 1.1.1.1
+  remote-as 65000
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
+    send-community
+    send-community extended
+
+neighbor 2.2.2.2
+  remote-as 65000
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
+    send-community
+    send-community extended
 ```
 
 ## Leaf2
 
-```bash
-feature bgp
-feature nv overlay
-feature vn-segment-vlan-based
+```cisco
+neighbor 1.1.1.1
+  remote-as 65000
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
+    send-community
+    send-community extended
 
-nv overlay evpn
+neighbor 2.2.2.2
+  remote-as 65000
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
+    send-community
+    send-community extended
 ```
 
 ## Spine1
 
-```bash
-feature bgp
-feature nv overlay
+```cisco
+neighbor 11.11.11.11
+  remote-as 65101
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
 
-nv overlay evpn
+neighbor 22.22.22.22
+  remote-as 65102
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
 ```
 
 ## Spine2
 
-```bash
-feature bgp
-feature nv overlay
+```cisco
+neighbor 11.11.11.11
+  remote-as 65101
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
 
-nv overlay evpn
+neighbor 22.22.22.22
+  remote-as 65102
+  update-source loopback0
+  ebgp-multihop 2
+  address-family l2vpn evpn
 ```
 
 ---
 
-# EVPN Neighbor Configuration
+# EVPN VNI Configuration
 
-## Leaf1
+Configured on both leaves.
 
-```bash
-router bgp 65101
-
-  neighbor 10.0.11.1
-    address-family l2vpn evpn
-      send-community
-      send-community extended
-
-  neighbor 10.0.12.1
-    address-family l2vpn evpn
-      send-community
-      send-community extended
+```cisco
+evpn
+  vni 10010 l2
+    rd auto
+    route-target import 10010:10010
+    route-target export 10010:10010
 ```
 
 ---
 
-## Leaf2
+# Route Target Strategy
 
-```bash
-router bgp 65102
+Explicit Route Target configuration was used.
 
-  neighbor 10.0.21.1
-    address-family l2vpn evpn
-      send-community
-      send-community extended
-
-  neighbor 10.0.22.1
-    address-family l2vpn evpn
-      send-community
-      send-community extended
+```text
+Import RT = 10010:10010
+Export RT = 10010:10010
 ```
+
+This guarantees both leaves import EVPN routes into the same VNI.
 
 ---
 
-## Spine1
+# Retain Route Target
 
-```bash
-router bgp 65000
+Configured on all EVPN speakers.
 
-  neighbor 10.0.11.0
-    address-family l2vpn evpn
+```cisco
+router bgp <ASN>
 
-  neighbor 10.0.21.0
-    address-family l2vpn evpn
+address-family l2vpn evpn
+  retain route-target all
 ```
 
----
+Purpose:
 
-## Spine2
-
-```bash
-router bgp 65000
-
-  neighbor 10.0.12.0
-    address-family l2vpn evpn
-
-  neighbor 10.0.22.0
-    address-family l2vpn evpn
-```
+* Retain EVPN routes even before local VNI import evaluation
+* Simplifies EVPN route visibility and troubleshooting
 
 ---
 
 # Verification
 
-## Verify EVPN Neighbors
+## EVPN Neighbors
 
-```bash
+```cisco
 show bgp l2vpn evpn summary
 ```
 
 Expected:
 
 ```text
-capable peers 2
-```
+Leaf1
+  1.1.1.1 Up
+  2.2.2.2 Up
 
-on all devices.
+Leaf2
+  1.1.1.1 Up
+  2.2.2.2 Up
+```
 
 ---
 
-## Verify BGP Configuration
+## Type-3 Routes
 
-```bash
-show run bgp
-```
-
-Confirm:
-
-```text
-address-family l2vpn evpn
-```
-
-exists under all EVPN neighbors.
-
----
-
-## Verify VTEP Reachability
-
-### Leaf1
-
-```bash
-show ip route 222.222.222.222
+```cisco
+show bgp l2vpn evpn route-type 3
 ```
 
 Expected:
 
 ```text
-Route learned via BGP
+Local IMET Route
+Remote IMET Route
+```
+
+Example:
+
+```text
+111.111.111.111
+222.222.222.222
 ```
 
 ---
 
-### Leaf2
+## EVPN Route Import
 
-```bash
-show ip route 111.111.111.111
+Expected output:
+
+```text
+Imported paths list: L2-10010
+```
+
+This confirms RT import into the local VNI.
+
+---
+
+# Success Criteria
+
+The control plane is considered operational when:
+
+* EVPN neighbors are Established
+* Type-3 routes are exchanged
+* Remote VTEPs are learned
+* EVPN routes are imported into L2RIB
+
+Verification:
+
+```cisco
+show bgp l2vpn evpn
+show bgp l2vpn evpn route-type 3
+show nve peers
 ```
 
 Expected:
 
 ```text
-Route learned via BGP
+Leaf1 learns VTEP 222.222.222.222
+Leaf2 learns VTEP 111.111.111.111
 ```
 
 ---
 
-### Spine1
+# Result
 
-```bash
-show ip route 111.111.111.111
-show ip route 222.222.222.222
-```
+Control plane operational.
 
-Expected:
+Working:
 
-```text
-Both VTEP loopbacks reachable
-```
+* EVPN BGP Sessions
+* Type-3 IMET Routes
+* Route Target Import
+* L2RIB Import
+* Dynamic VTEP Discovery
 
----
+Design Note
 
-### Spine2
+Because the EVPN fabric uses multiple ASNs
+(65101, 65102, 65000), explicit Route Targets
+are configured:
 
-```bash
-show ip route 111.111.111.111
-show ip route 222.222.222.222
-```
+RT Import: 10010:10010
+RT Export: 10010:10010
 
-Expected:
+This guarantees consistent EVPN route import
+across all VTEPs regardless of local ASN.
 
-```text
-Both VTEP loopbacks reachable
-```
 
----
+Next phase:
 
-# Validation Results
-
-EVPN capability successfully negotiated:
-
-```text
-Leaf1  <-> Spine1
-Leaf1  <-> Spine2
-
-Leaf2  <-> Spine1
-Leaf2  <-> Spine2
-```
-
-All devices report:
-
-```text
-capable peers 2
-```
-
----
-
-# Notes
-
-PfxRcd may remain:
-
-```text
-0
-```
-
-at this stage.
-
-This is expected because:
-
-* NVE interface not configured
-* VNI not configured
-* VLAN-to-VNI mapping not configured
-* No EVPN routes exist yet
-
-The EVPN control plane is operational and ready for the next phase.
-
----
-
-# Next Phase
-
-03-EVPN
-
-```text
 03-NVE
-```
 
-Tasks:
-
-1. Create NVE1
-2. Configure source-interface Loopback1
-3. Configure VNIs
-4. Configure VLAN-to-VNI mapping
-5. Verify EVPN Route Type-3 advertisements
-
-```
-```
+Verify VXLAN tunnel establishment and NVE peer state.
