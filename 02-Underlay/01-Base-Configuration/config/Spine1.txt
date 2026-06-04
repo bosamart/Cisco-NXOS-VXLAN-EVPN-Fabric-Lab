@@ -1,0 +1,37 @@
+conf t
+hostname Spine1
+end
+
+conf t
+
+interface loopback0
+ ip address 1.1.1.1/32
+
+end
+
+# Step 3 - Configure Underlay Interfaces
+ 
+conf t
+
+interface e1/1
+ no switchport
+ ip address 10.0.21.1/31
+ no shutdown
+
+interface e1/2
+ no switchport
+ ip address 10.0.11.1/31
+ no shutdown
+
+end
+
+interface e1/2
+ description TO-LEAF1-E1/1
+
+interface e1/1
+ description TO-LEAF2-E1/2
+ 
+
+# Step 4 - Save
+
+copy running-config startup-config

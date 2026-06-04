@@ -1,0 +1,8 @@
+Design:
+Underlay = eBGP using P2P links
+
+Overlay = EVPN using Loopback0
+
+Spines = Route Reflectors
+
+Leaves = EVPN Clients

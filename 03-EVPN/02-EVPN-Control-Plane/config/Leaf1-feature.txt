@@ -1,0 +1,9 @@
+conf t
+
+feature bgp
+feature nv overlay
+feature vn-segment-vlan-based
+
+nv overlay evpn
+
+end

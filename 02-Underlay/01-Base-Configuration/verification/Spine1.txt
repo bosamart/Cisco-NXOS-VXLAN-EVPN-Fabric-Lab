@@ -1,0 +1,12 @@
+
+Spine1# show hostname
+Spine1
+Spine1# show ip interface brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  1.1.1.1         protocol-up/link-up/admin-up
+Eth1/1               10.0.21.1       protocol-up/link-up/admin-up
+Eth1/2               10.0.11.1       protocol-up/link-up/admin-up
+Spine1#
+Spine1#

@@ -1,0 +1,16 @@
+feature bgp
+
+router bgp 65101
+  router-id 11.11.11.11
+
+  address-family ipv4 unicast
+
+  network 11.11.11.11/32
+
+  neighbor 10.0.11.1
+    remote-as 65000
+    address-family ipv4 unicast
+
+  neighbor 10.0.12.1
+    remote-as 65000
+    address-family ipv4 unicast

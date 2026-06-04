@@ -1,0 +1,15 @@
+conf t
+
+router bgp 65101
+
+  neighbor 10.0.11.1
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+
+  neighbor 10.0.12.1
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+
+end

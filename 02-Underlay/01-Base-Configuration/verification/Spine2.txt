@@ -1,0 +1,10 @@
+
+Spine2# show ip interface brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  2.2.2.2         protocol-up/link-up/admin-up
+
+Eth1/2               10.0.12.1       protocol-up/link-up/admin-up
+Eth1/3               10.0.22.1       protocol-up/link-up/admin-up
+Spine2#

@@ -1,0 +1,32 @@
+conf t
+hostname Spine2
+end
+
+conf t
+
+interface loopback0
+ ip address 2.2.2.2/32
+
+end
+
+
+conf t
+
+interface e1/2
+  description TO-LEAF1-E1/3
+
+ no switchport
+ ip address 10.0.12.1/31
+ no shutdown
+
+interface e1/3
+ description TO-LEAF2-E1/4
+ 
+ no switchport
+ ip address 10.0.22.1/31
+ no shutdown
+
+end
+
+copy running-config startup-config
+

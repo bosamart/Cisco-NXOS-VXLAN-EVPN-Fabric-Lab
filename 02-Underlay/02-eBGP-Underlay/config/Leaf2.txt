@@ -1,0 +1,16 @@
+feature bgp
+
+router bgp 65102
+  router-id 22.22.22.22
+
+  address-family ipv4 unicast
+
+  network 22.22.22.22/32
+
+  neighbor 10.0.21.1
+    remote-as 65000
+    address-family ipv4 unicast
+
+  neighbor 10.0.22.1
+    remote-as 65000
+    address-family ipv4 unicast

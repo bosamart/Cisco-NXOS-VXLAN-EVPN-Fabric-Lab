@@ -1,0 +1,36 @@
+
+Leaf1# show hostname
+Leaf1
+Leaf1# show ip interface brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  11.11.11.11     protocol-up/link-up/admin-up
+Eth1/1               10.0.11.0       protocol-up/link-up/admin-up
+Eth1/3               10.0.12.0       protocol-up/link-up/admin-up
+Leaf1#
+Leaf1#
+Leaf1# ping 10.0.11.1
+PING 10.0.11.1 (10.0.11.1): 56 data bytes
+64 bytes from 10.0.11.1: icmp_seq=0 ttl=254 time=2.048 ms
+64 bytes from 10.0.11.1: icmp_seq=1 ttl=254 time=1.515 ms
+64 bytes from 10.0.11.1: icmp_seq=2 ttl=254 time=1.568 ms
+64 bytes from 10.0.11.1: icmp_seq=3 ttl=254 time=1.305 ms
+64 bytes from 10.0.11.1: icmp_seq=4 ttl=254 time=1.348 ms
+
+--- 10.0.11.1 ping statistics ---
+5 packets transmitted, 5 packets received, 0.00% packet loss
+round-trip min/avg/max = 1.305/1.556/2.048 ms
+Leaf1# ping 10.0.12.1
+PING 10.0.12.1 (10.0.12.1): 56 data bytes
+36 bytes from 10.0.12.0: Destination Host Unreachable
+Request 0 timed out
+64 bytes from 10.0.12.1: icmp_seq=1 ttl=254 time=2.204 ms
+64 bytes from 10.0.12.1: icmp_seq=2 ttl=254 time=1.274 ms
+64 bytes from 10.0.12.1: icmp_seq=3 ttl=254 time=1.192 ms
+64 bytes from 10.0.12.1: icmp_seq=4 ttl=254 time=1.221 ms
+
+--- 10.0.12.1 ping statistics ---
+5 packets transmitted, 4 packets received, 20.00% packet loss
+round-trip min/avg/max = 1.192/1.472/2.204 ms
+Leaf1#
