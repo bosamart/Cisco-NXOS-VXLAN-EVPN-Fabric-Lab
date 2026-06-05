@@ -1,0 +1,102 @@
+
+Leaf1# show bgp l2vpn evpn route-type 2
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 11.11.11.11:32777    (L2VNI 10010)
+BGP routing table entry for [2]:[0]:[0]:[48]:[0050.0000.0700]:[0]:[0.0.0.0]/216, version 3
+Paths: (1 available, best #1)
+Flags: (0x000102) (high32 00000000) on xmit-list, is not in l2rib/evpn
+
+  Advertised path-id 1
+  Path type: local, path is valid, is best path, no labeled nexthop
+  AS-Path: NONE, path locally originated
+    111.111.111.111 (metric 0) from 0.0.0.0 (11.11.11.11)
+      Origin IGP, MED not set, localpref 100, weight 32768
+      Received label 10010
+      Extcommunity: RT:10010:10010 ENCAP:8
+
+  Path-id 1 advertised to peers:
+    1.1.1.1            2.2.2.2
+BGP routing table entry for [2]:[0]:[0]:[48]:[0050.0000.0800]:[0]:[0.0.0.0]/216, version 8
+Paths: (1 available, best #1)
+Flags: (0x000212) (high32 00000000) on xmit-list, is in l2rib/evpn, is not in HW
+
+  Advertised path-id 1
+  Path type: internal, path is valid, is best path, no labeled nexthop, in rib
+             Imported from 22.22.22.22:32777:[2]:[0]:[0]:[48]:[0050.0000.0800]:[0]:[0.0.0.0]/216
+  AS-Path: NONE, path sourced internal to AS
+    222.222.222.222 (metric 81) from 1.1.1.1 (1.1.1.1)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 10010
+      Extcommunity: RT:10010:10010 ENCAP:8
+      Originator: 22.22.22.22 Cluster list: 1.1.1.1
+
+  Path-id 1 not advertised to any peer
+
+Route Distinguisher: 22.22.22.22:32777
+BGP routing table entry for [2]:[0]:[0]:[48]:[0050.0000.0800]:[0]:[0.0.0.0]/216, version 11
+Paths: (2 available, best #2)
+Flags: (0x000202) (high32 00000000) on xmit-list, is not in l2rib/evpn, is not in HW
+
+  Path type: internal, path is valid, not best reason: Neighbor Address, no labeled nexthop
+  AS-Path: NONE, path sourced internal to AS
+    222.222.222.222 (metric 81) from 2.2.2.2 (2.2.2.2)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 10010
+      Extcommunity: RT:10010:10010 ENCAP:8
+      Originator: 22.22.22.22 Cluster list: 2.2.2.2
+
+  Advertised path-id 1
+  Path type: internal, path is valid, is best path, no labeled nexthop
+             Imported to 1 destination(s)
+             Imported paths list: L2-10010
+  AS-Path: NONE, path sourced internal to AS
+    222.222.222.222 (metric 81) from 1.1.1.1 (1.1.1.1)
+      Origin IGP, MED not set, localpref 100, weight 0
+      Received label 10010
+      Extcommunity: RT:10010:10010 ENCAP:8
+      Originator: 22.22.22.22 Cluster list: 1.1.1.1
+
+  Path-id 1 not advertised to any peer
+
+Leaf1# show nve peers
+Interface Peer-IP                                 State LearnType Uptime   Router-Mac
+--------- --------------------------------------  ----- --------- -------- -----------------
+nve1      1.1.1.1                                 Up    CP        00:11:02 n/a
+nve1      222.222.222.222                         Up    CP        00:11:02 n/a
+
+Leaf1# show mac address-table dynamic
+Legend:
+        * - primary entry, G - Gateway MAC, (R) - Routed MAC, O - Overlay MAC
+        age - seconds since last seen,+ - primary entry using vPC Peer-Link,
+        (T) - True, (F) - False, C - ControlPlane MAC, ~ - vsan,
+        (NA)- Not Applicable A - ESI Active Path, S - ESI Standby Path
+        TL - True Learned, PS - Peer Sync, RO - Re-originate
+   VLAN     MAC Address      Type      age     Secure NTFY Ports
+---------+-----------------+--------+---------+------+----+------------------
+*   10     0050.0000.0700   dynamic  NA         F      F    Eth1/10
+C   10     0050.0000.0800   dynamic  NA         F      F    nve1(222.222.222.222)
+Leaf1# show l2route evpn mac all
+
+Flags -(Rmac):Router MAC (Stt):Static (L):Local (R):Remote
+(Dup):Duplicate (Spl):Split (Rcv):Recv (AD):Auto-Delete (D):Del Pending
+(S):Stale (C):Clear, (Ps):Peer Sync (Ro):Re-Originated (Nho):NH-Override
+(Asy):Asymmetric (Gw):Gateway
+(Bh):Blackhole, (Dum):Dummy
+(Pf):Permanently-Frozen, (Orp): Orphan
+
+(PipOrp): Directly connected Orphan to PIP based vPC BGW
+(PipPeerOrp): Orphan connected to peer of PIP based vPC BGW
+Topology    Mac Address    Prod   Flags              Seq No     Next-Hops
+----------- -------------- ------ ------------------ ---------- ---------------------------------------------------------
+10          0050.0000.0700 Local  L,                 0          Eth1/10
+10          0050.0000.0800 BGP    Rcv                0          222.222.222.222 (Label: 10010)
+Leaf1#
+Leaf1#
+Leaf1#
+Leaf1# show nve peers
+Interface Peer-IP                                 State LearnType Uptime   Router-Mac
+--------- --------------------------------------  ----- --------- -------- -----------------
+nve1      222.222.222.222                         Up    CP        00:34:37 n/a
+
+Leaf1#
+Leaf1#
