@@ -1,0 +1,26 @@
+
+Leaf1# show ip ospf neighbors
+ OSPF Process ID UNDERLAY VRF default
+ Total number of neighbors: 2
+ Neighbor ID     Pri State            Up Time  Address         Interface
+ 1.1.1.1           1 FULL/ -          00:06:10 10.0.11.1       Eth1/1
+ 2.2.2.2           1 FULL/ -          00:01:02 10.0.12.1       Eth1/3
+Leaf1# show ip route ospf
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+1.1.1.1/32, ubest/mbest: 1/0
+    *via 10.0.11.1, Eth1/1, [110/41], 00:06:04, ospf-UNDERLAY, intra
+10.0.21.0/31, ubest/mbest: 1/0
+    *via 10.0.11.1, Eth1/1, [110/80], 00:06:04, ospf-UNDERLAY, intra
+10.0.22.0/31, ubest/mbest: 1/0
+    *via 10.0.12.1, Eth1/3, [110/80], 00:00:56, ospf-UNDERLAY, intra
+222.222.222.222/32, ubest/mbest: 2/0
+    *via 10.0.11.1, Eth1/1, [110/81], 00:05:54, ospf-UNDERLAY, intra
+    *via 10.0.12.1, Eth1/3, [110/81], 00:00:26, ospf-UNDERLAY, intra
+
+Leaf1#
+Leaf1#

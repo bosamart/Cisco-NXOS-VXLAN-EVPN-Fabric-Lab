@@ -1,0 +1,16 @@
+feature ospf
+
+router ospf UNDERLAY
+  router-id 2.2.2.2
+
+interface loopback0
+  ip address 2.2.2.2/32
+  ip router ospf UNDERLAY area 0
+
+interface eth1/1
+  ip router ospf UNDERLAY area 0
+  ip ospf network point-to-point
+
+interface eth1/2
+  ip router ospf UNDERLAY area 0
+  ip ospf network point-to-point
