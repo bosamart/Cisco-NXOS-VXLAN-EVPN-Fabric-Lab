@@ -1,0 +1,58 @@
+Leaf2# show ip route 111.111.111.111
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+111.111.111.111/32, ubest/mbest: 2/0
+    *via 10.0.21.1, Eth1/2, [110/81], 00:37:16, ospf-UNDERLAY, intra
+    *via 10.0.22.1, Eth1/4, [110/81], 00:31:50, ospf-UNDERLAY, intra
+Leaf2# show ip route 222.222.222.222
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+222.222.222.222/32, ubest/mbest: 2/0, attached
+    *via 222.222.222.222, Lo1, [0/0], 02:14:59, local
+    *via 222.222.222.222, Lo1, [0/0], 02:14:59, direct
+Leaf2#
+Leaf2# show bgp l2vpn evpn route-type 3
+BGP routing table information for VRF default, address family L2VPN EVPN
+Route Distinguisher: 22.22.22.22:32777    (L2VNI 10010)
+BGP routing table entry for [3]:[0]:[32]:[222.222.222.222]/88, version 4
+Paths: (1 available, best #1)
+Flags: (0x000002) (high32 00000000) on xmit-list, is not in l2rib/evpn
+
+  Advertised path-id 1
+  Path type: local, path is valid, is best path, no labeled nexthop, is extd
+  AS-Path: NONE, path locally originated
+    222.222.222.222 (metric 0) from 0.0.0.0 (22.22.22.22)
+      Origin IGP, MED not set, localpref 100, weight 32768
+      Extcommunity: RT:10010:10010 ENCAP:8
+      PMSI Tunnel Attribute:
+        flags: 0x00, Tunnel type: Ingress Replication
+        Label: 10010, Tunnel Id: 222.222.222.222
+
+  Path-id 1 advertised to peers:
+    1.1.1.1            2.2.2.2
+
+Leaf2#
+Leaf2# show nve vni
+Codes: CP - Control Plane        DP - Data Plane
+       UC - Unconfigured         SA - Suppress ARP
+       S-ND - Suppress ND
+       SU - Suppress Unknown Unicast
+       Xconn - Crossconnect
+       MS-IR - Multisite Ingress Replication
+       HYB - Hybrid IRB mode
+
+Interface VNI      Multicast-group   State Mode Type [BD/VRF]      Flags
+--------- -------- ----------------- ----- ---- ------------------ -----
+nve1      10010    UnicastBGP        Up    CP   L2 [10]
+
+Leaf2#
+Leaf2# show nve peers
+Leaf2#

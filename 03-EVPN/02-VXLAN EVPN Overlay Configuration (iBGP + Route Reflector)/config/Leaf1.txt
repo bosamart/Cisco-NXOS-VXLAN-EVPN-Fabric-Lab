@@ -1,0 +1,18 @@
+router bgp 65000
+  router-id 11.11.11.11
+
+  address-family l2vpn evpn
+
+  neighbor 1.1.1.1
+    remote-as 65000
+    update-source loopback0
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+
+  neighbor 2.2.2.2
+    remote-as 65000
+    update-source loopback0
+    address-family l2vpn evpn
+      send-community
+      send-community extended

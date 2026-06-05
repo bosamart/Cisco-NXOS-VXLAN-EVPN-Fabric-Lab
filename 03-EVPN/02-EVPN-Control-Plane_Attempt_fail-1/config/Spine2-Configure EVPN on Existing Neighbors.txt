@@ -1,0 +1,7 @@
+router bgp 65000
+
+  neighbor 10.0.12.0
+    address-family l2vpn evpn
+
+  neighbor 10.0.22.0
+    address-family l2vpn evpn

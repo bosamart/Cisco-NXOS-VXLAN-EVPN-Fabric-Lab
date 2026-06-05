@@ -1,0 +1,25 @@
+
+Spine1# show ip interface brief
+
+IP Interface Status for VRF "default"(1)
+Interface            IP Address      Interface Status
+Lo0                  1.1.1.1         protocol-up/link-up/admin-up
+Eth1/1               10.0.21.1       protocol-up/link-up/admin-up
+Eth1/2               10.0.11.1       protocol-up/link-up/admin-up
+Spine1# show ip route bgp
+IP Route Table for VRF "default"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+11.11.11.11/32, ubest/mbest: 1/0
+    *via 10.0.11.0, [20/0], 01:40:28, bgp-65000, external, tag 65101
+22.22.22.22/32, ubest/mbest: 1/0
+    *via 10.0.21.0, [20/0], 01:39:43, bgp-65000, external, tag 65102
+111.111.111.111/32, ubest/mbest: 1/0
+    *via 10.0.11.0, [20/0], 00:05:16, bgp-65000, external, tag 65101
+222.222.222.222/32, ubest/mbest: 1/0
+    *via 10.0.21.0, [20/0], 00:04:51, bgp-65000, external, tag 65102
+
+Spine1#

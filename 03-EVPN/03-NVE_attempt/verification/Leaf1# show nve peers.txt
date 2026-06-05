@@ -1,0 +1,6 @@
+Leaf1# show nve peers
+Interface Peer-IP                                 State LearnType Uptime   Router-Mac
+--------- --------------------------------------  ----- --------- -------- -----------------
+nve1      222.222.222.222                         Up    CP        00:20:14 n/a
+
+Leaf1#

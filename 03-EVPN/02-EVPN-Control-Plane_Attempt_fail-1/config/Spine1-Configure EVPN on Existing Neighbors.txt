@@ -1,0 +1,11 @@
+conf t
+
+router bgp 65000
+
+  neighbor 10.0.11.0
+    address-family l2vpn evpn
+
+  neighbor 10.0.21.0
+    address-family l2vpn evpn
+
+end

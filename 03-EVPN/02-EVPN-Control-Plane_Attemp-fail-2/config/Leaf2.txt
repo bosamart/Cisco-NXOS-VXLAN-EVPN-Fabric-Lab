@@ -1,0 +1,28 @@
+conf t
+
+router bgp 65102
+  router-id 22.22.22.22
+
+  no neighbor 10.0.21.1
+  no neighbor 10.0.22.1
+
+  address-family l2vpn evpn
+
+  neighbor 1.1.1.1
+    remote-as 65000
+    update-source loopback0
+    ebgp-multihop 2
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+
+  neighbor 2.2.2.2
+    remote-as 65000
+    update-source loopback0
+    ebgp-multihop 2
+    address-family l2vpn evpn
+      send-community
+      send-community extended
+
+end
+copy run start

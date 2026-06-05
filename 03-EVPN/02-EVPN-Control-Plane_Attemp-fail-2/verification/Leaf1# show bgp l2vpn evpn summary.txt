@@ -1,0 +1,16 @@
+Leaf1# show bgp l2vpn evpn summary
+BGP summary information for VRF default, address family L2VPN EVPN
+BGP router identifier 11.11.11.11, local AS number 65101
+BGP table version is 10, L2VPN EVPN config peers 2, capable peers 2
+2 network entries and 2 paths using 600 bytes of memory
+BGP attribute entries [2/736], BGP AS path entries [0/0]
+BGP community entries [0/0], BGP clusterlist entries [0/0]
+
+Neighbor        V    AS    MsgRcvd    MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+1.1.1.1         4 65000          9         11       10    0    0 00:03:45 0
+2.2.2.2         4 65000          9         11       10    0    0 00:03:38 0
+
+Neighbor        T    AS Type-1     Type-2     Type-3     Type-4     Type-5     Type-12
+1.1.1.1         I 65000 0          0          0          0          0          0
+2.2.2.2         I 65000 0          0          0          0          0          0
+Leaf1#
