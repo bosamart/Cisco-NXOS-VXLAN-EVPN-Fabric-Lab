@@ -1,5 +1,3 @@
-# CONCEPTS.md
-
 # VXLAN EVPN Concepts
 
 This document explains the fundamental concepts used in the Cisco NX-OS VXLAN EVPN Fabric Lab.
